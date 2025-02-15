@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/plugins.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/kaiadmin.min.css') }}" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="{{ asset('assets/css/toastr/toastr.min.css') }}">
 
     @stack('css')
   </head>
@@ -49,7 +49,7 @@
     <script src="{{ asset('assets/js/kaiadmin.min.js') }}"></script>
    
      <!-- JS Toastr -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="{{ asset('assets/js/plugin/toastr/toastr.min.js') }}"></script>
     <!-- File konfigurasi toastr -->
     <script src="{{ asset('assets/js/toastr-config.js') }}"></script>
     

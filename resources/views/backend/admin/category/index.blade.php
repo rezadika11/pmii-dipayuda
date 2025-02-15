@@ -36,7 +36,7 @@
                     <input type="text" class="form-control" id="slug" name="slug" readonly>
                 </div>
                 <div class="form-group">
-                    <button type="button" id="addCategoryBtn" class="btn btn-sm btn-primary"><i class="bi bi-floppy"></i> Simpan</button>
+                    <button type="button" id="addCategoryBtn" class="btn btn-sm btn-primary"> Simpan</button>
                 </div>
             </form>
         </div>
@@ -164,7 +164,7 @@
         complete: function() {
             // Re-enable submit button
             $('#addCategoryBtn').prop('disabled', false).html(
-                '<span class="btn-label"></span> Add New Category'
+                '<span class="btn-label"></span> Simpan'
             );
         }
     });

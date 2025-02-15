@@ -39,7 +39,7 @@
                     </span>
                     <h4 class="text-section">Blog</h4>
                 </li>
-                <li class="nav-item {{ request()->routeIs('posts*') || request()->routeIs('category*') || request()->routeIs('tags*') ? 'active submenu' : '' }} ">
+                <li class="nav-item {{ request()->routeIs('posts*')  || request()->routeIs('category*') || request()->routeIs('tags*') ? 'active submenu' : '' }} ">
                     <a data-bs-toggle="collapse" href="#base">
                         <i class="bi bi-pin-angle"></i>
                         <p>Posts</p>
@@ -47,14 +47,14 @@
                     </a>
                     <div class="collapse {{ request()->routeIs('posts*') || request()->routeIs('category*') || request()->routeIs('tags*') ? 'show' : '' }}" id="base">
                         <ul class="nav nav-collapse">
-                        {{-- <li class="{{ request()->routeIs('posts*') ? 'active' : '' }}">
+                        <li class="{{ request()->routeIs('posts.index', 'posts.edit') ? 'active' : '' }}">
                             <a href="{{ route('posts.index') }}">
-                            <span class="sub-item">All Posts</span>
+                            <span class="sub-item">Semua Pos</span>
                             </a>
-                        </li> --}}
-                        <li>
-                            <a href="#">
-                            <span class="sub-item">Add New Post</span>
+                        </li>
+                        <li class="{{ request()->routeIs('posts.create') ? 'active' : '' }}">
+                            <a href="{{ route('posts.create') }}">
+                            <span class="sub-item">Tambah Pos Baru</span>
                             </a>
                         </li>
                         <li class="{{ request()->routeIs('category*') ? 'active' : '' }}">
@@ -64,7 +64,7 @@
                         </li>
                         <li class="{{ request()->routeIs('tags*') ? 'active' : '' }}">
                             <a href="{{ route('tags.index') }}">
-                            <span class="sub-item">Tags</span>
+                            <span class="sub-item">Tag</span>
                             </a>
                         </li>
                         </ul>

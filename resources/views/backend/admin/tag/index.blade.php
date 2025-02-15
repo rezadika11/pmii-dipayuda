@@ -1,5 +1,5 @@
 @extends('backend.layouts.main')
-@section('title','Tags')
+@section('title','Tag')
 @section('content')
 <div class="container">
     <div class="page-inner">
@@ -23,7 +23,7 @@
                     <input type="text" class="form-control" id="slug" name="slug" readonly>
                 </div>
                 <div class="form-group">
-                    <button type="button" id="addTagBtn" class="btn btn-sm btn-primary"><i class="bi bi-floppy"></i> Simpan</button>
+                    <button type="button" id="addTagBtn" class="btn btn-sm btn-primary"> Simpan</button>
                 </div>
             </form>
         </div>
@@ -155,7 +155,7 @@
                 complete: function() {
                     // Re-enable submit button
                     $('#addTagBtn').prop('disabled', false).html(
-                        '<span class="btn-label"></span> Add New Tag'
+                        '<span class="btn-label"></span> Simpan'
                     );
                 }
             });
