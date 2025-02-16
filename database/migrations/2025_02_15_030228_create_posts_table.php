@@ -18,7 +18,6 @@ return new class extends Migration
                 ->nullable()
                 ->constrained()
                 ->nullOnDelete();
-            $table->foreignId('tag_id')->constrained();
             $table->string('title');
             $table->text('excerpt');
             $table->longText('content');

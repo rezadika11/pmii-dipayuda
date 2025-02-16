@@ -34,17 +34,38 @@
                             <!-- Isi -->
                             <div class="form-group">
                                 <label for="summernote">Isi <span class="text-danger">*</span></label>
-                                <textarea id="summernote" name="content" class="form-control"></textarea>
+                                <textarea id="summernote" name="content" class="form-control @error('content')
+                                    is-invalid
+                                @enderror"></textarea>
+                                @error('content')
+                                    <div class="invalid-feedback">
+                                            {{ $message }}
+                                    </div>
+                                 @enderror
                             </div>
                             <!-- Deskripsi -->
                             <div class="form-group">
                                 <label for="excerpt">Deskripsi <span class="text-danger">*</span></label>
-                                <textarea name="excerpt" class="form-control" id="excerpt" cols="4" rows="4"></textarea>
+                                <textarea name="excerpt" class="form-control @error('excerpt')
+                                    is-invalid
+                                @enderror" id="excerpt" cols="4" rows="4"></textarea>
+                                 @error('content')
+                                    <div class="invalid-feedback">
+                                            {{ $message }}
+                                    </div>
+                                 @enderror
                             </div>
                             <!-- SEO Meta Deskripsi -->
                             <div class="form-group">
                                 <label for="meta_description">SEO Meta Deskripsi <span class="text-danger">*</span></label>
-                                <textarea name="meta_description" class="form-control" id="meta_description" cols="4" rows="4"></textarea>
+                                <textarea name="meta_description" class="form-control @error('meta_description')
+                                    is-invalid
+                                @enderror" id="meta_description" cols="4" rows="4"></textarea>
+                                  @error('content')
+                                    <div class="invalid-feedback">
+                                            {{ $message }}
+                                    </div>
+                                 @enderror
                             </div>
                         </div>
                     </div>
@@ -55,33 +76,52 @@
                             <!-- Kategori -->
                             <div class="form-group">
                                 <label for="category">Kategori <span class="text-danger">*</span></label>
-                                <select name="category" id="category" class="select2 form-select">
+                                <select name="category" id="category" class="select2 form-select @error('category')
+                                    is-invalid
+                                @enderror">
                                     <option value="" selected disabled>Pilih Kategori</option>
                                     @foreach ($categories as $item)
                                         <option value="{{ $item->id }}">{{ $item->name }}</option>
                                     @endforeach
                                 </select>
-                                <div class="invalid-feedback title-error"></div>
+                                @error('content')
+                                    <div class="invalid-feedback">
+                                            {{ $message }}
+                                    </div>
+                                 @enderror
                             </div>
                             <!-- Tag -->
                             <div class="form-group">
                                 <label for="tag">Tag <span class="text-danger">*</span></label>
-                                <select class="form-select select2-multiple" name="tag[]" id="tag" placeholder="Pilih Tag" multiple="multiple">
+                                <select class="form-select select2-multiple @error('tag')
+                                    is-invalid
+                                @enderror" name="tag[]" id="tag" placeholder="Pilih Tag" multiple="multiple">
                                     @foreach ($tags as $item)
                                         <option value="{{ $item->id }}">{{ $item->name }}</option>
                                     @endforeach
                                 </select>
+                                 @error('content')
+                                    <div class="invalid-feedback">
+                                            {{ $message }}
+                                    </div>
+                                 @enderror
                             </div>
                             <!-- Penulis -->
                             <div class="form-group">
                                 <label for="author">Penulis <span class="text-danger">*</span></label>
-                                <select name="author" id="author" class="select2 form-select">
+                                <select name="author" id="author" class="select2 form-select @error('author')
+                                    is-invalid
+                                @enderror">
                                     <option value="" selected disabled>Pilih Penulis</option>
                                     @foreach ($users as $item)
                                         <option value="{{ $item->id }}" {{ auth()->user()->id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                     @endforeach
                                 </select>
-                                <div class="invalid-feedback title-error"></div>
+                               @error('content')
+                                    <div class="invalid-feedback">
+                                            {{ $message }}
+                                    </div>
+                                 @enderror
                             </div>
                             <!-- Tanggal Publish dan Status Publish -->
                             <div class="row">
@@ -104,7 +144,14 @@
                             <!-- Gambar -->
                             <div class="form-group">
                                 <label for="gambar">Pilih Gambar <span class="text-danger">*</span></label>
-                                <input type="file" name="image" class="form-control" id="gambar">
+                                <input type="file" name="image" class="form-control @error('image')
+                                    is-invalid
+                                @enderror" id="gambar">
+                                 @error('image')
+                                    <div class="invalid-feedback">
+                                            {{ $message }}
+                                    </div>
+                                 @enderror
                                 <div id="previewImage" style="margin-top: 10px;"></div>
                             </div>
                             <!-- Tombol Submit -->
@@ -209,13 +256,8 @@
                     'X-CSRF-TOKEN': "{{ csrf_token() }}",
                     'Accept': 'application/json'
                 },
-                beforeSend: function() {
-                    // Optional: Show loading indicator
-                    toastr.info('Sedang mengunggah gambar...');
-                },
                 success: function(response) {
                     $('#summernote').summernote('insertImage', response);
-                    toastr.success('Gambar berhasil diunggah');
                 },
                 error: function(xhr) {
                     // Handle different types of errors
