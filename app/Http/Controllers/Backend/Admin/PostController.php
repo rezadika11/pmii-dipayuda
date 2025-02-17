@@ -8,10 +8,75 @@ use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Yajra\DataTables\Facades\DataTables;
 
 class PostController extends Controller
 {
+
+    public function datatable()
+    {
+        // Pastikan untuk eager load relasi agar tidak terjadi N+1 problem
+        $query = Post::with(['users', 'category']);
+
+        return DataTables::of($query)
+            ->addIndexColumn() // Kolom No
+            ->addColumn('judul', function ($row) {
+                return $row->title;
+            })
+            ->addColumn('penulis', function ($row) {
+                // Pastikan relasi author ada, jika tidak tampilkan tanda -
+                return $row->users ? $row->users->name : '-';
+            })
+            ->addColumn('kategori', function ($row) {
+                return $row->category ? $row->category->name : '-';
+            })
+            ->editColumn('tanggal', function ($row) {
+                // Format tanggal sesuai kebutuhan, misal menggunakan created_at
+                return Carbon::parse($row->published)->format('d-m-Y');
+            })
+            ->addColumn('publish', function ($row) {
+                $status    = $row->is_published; // asumsikan 1 = published, 0 = draft
+                $badgeClass = $status ? 'bg-info' : 'bg-warning';
+                $label      = $status ? 'Published' : 'Draft';
+
+                // Tambahkan class "btn-toggle-publish" dan data-id serta data-status
+                return '<span class="badge ' . $badgeClass . ' btn-toggle-publish" 
+                data-id="' . $row->id . '" 
+                data-status="' . $status . '" 
+                style="cursor:pointer;">' . $label . '</span>';
+            })
+            ->addColumn('aksi', function ($row) {
+                $btnEdit = '<button type="button" class="btn btn-sm btn-success btn-edit" data-id="' . $row->id . '">
+                            <i class="bi bi-pencil-square"></i> Edit
+                        </button>';
+                $btnDelete = '<button type="button" class="btn btn-sm btn-danger btn-delete" data-id="' . $row->id . '">
+                            <i class="bi bi-trash"></i> Hapus
+                        </button>';
+                return $btnEdit . ' ' . $btnDelete;
+            })
+            // Pastikan kolom yang berisi HTML di-render dengan benar
+            ->rawColumns(['publish', 'aksi'])
+            ->make(true);
+    }
+
+    public function togglePublish(Request $request)
+    {
+        // Validasi input jika diperlukan
+        $request->validate([
+            'id' => 'required|exists:posts,id',
+            'is_published' => 'required|in:0,1'
+        ]);
+
+        $post = Post::findOrFail($request->id);
+        $post->is_published = $request->is_published;
+        $post->save();
+
+        return response()->json(['success' => true, 'message' => 'Status berhasil diperbarui.']);
+    }
+
+
     public function index()
     {
         return view('backend.admin.post.index');

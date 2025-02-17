@@ -47,5 +47,6 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{id}', 'destroy')->name('destroy');
         Route::post('/upload',  'upload')->name('upload');
         Route::get('/datatable', 'datatable')->name('datatable');
+        Route::post('/toggle-publish', 'togglePublish')->name('toggle-publish');
     });
 });
