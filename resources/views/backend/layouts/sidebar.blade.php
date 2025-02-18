@@ -37,7 +37,7 @@
                     <span class="sidebar-mini-icon">
                         <i class="fa fa-ellipsis-h"></i>
                     </span>
-                    <h4 class="text-section">Blog</h4>
+                    <h4 class="text-section">Menu</h4>
                 </li>
                 <li class="nav-item {{ request()->routeIs('posts*')  || request()->routeIs('category*') || request()->routeIs('tags*') ? 'active submenu' : '' }} ">
                     <a data-bs-toggle="collapse" href="#base">
@@ -69,6 +69,12 @@
                         </li>
                         </ul>
                     </div>
+                </li>
+                <li class="nav-item {{ request()->routeIs('users*') ? 'active' : '' }} ">
+                    <a href="{{ route('users.index') }}">
+                      <i class="bi bi-person-gear"></i>
+                      <p>User</p>
+                    </a>
                 </li>
             </ul>
         </div>

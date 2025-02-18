@@ -49,7 +49,7 @@
                                 <textarea name="excerpt" class="form-control @error('excerpt')
                                     is-invalid
                                 @enderror" id="excerpt" cols="4" rows="4">{{ old('excerpt',$post->excerpt) }}</textarea>
-                                 @error('content')
+                                 @error('excerpt')
                                     <div class="invalid-feedback">
                                             {{ $message }}
                                     </div>
@@ -61,7 +61,7 @@
                                 <textarea name="meta_description" class="form-control @error('meta_description')
                                     is-invalid
                                 @enderror" id="meta_description" cols="4" rows="4">{{ old('meta_description',$post->meta_description) }}</textarea>
-                                  @error('content')
+                                  @error('meta_description')
                                     <div class="invalid-feedback">
                                             {{ $message }}
                                     </div>
@@ -84,7 +84,7 @@
                                          <option value="{{ $item->id }}" {{ $post->category_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                     @endforeach
                                 </select>
-                                @error('content')
+                                @error('category')
                                     <div class="invalid-feedback">
                                             {{ $message }}
                                     </div>
@@ -103,7 +103,7 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                 @error('content')
+                                 @error('tag')
                                     <div class="invalid-feedback">
                                             {{ $message }}
                                     </div>
@@ -120,7 +120,7 @@
                                         <option value="{{ $item->id }}" {{ $post->users->id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                     @endforeach
                                 </select>
-                               @error('content')
+                               @error('author')
                                     <div class="invalid-feedback">
                                             {{ $message }}
                                     </div>

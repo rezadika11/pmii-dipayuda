@@ -69,14 +69,15 @@
             >
               <div class="avatar-sm">
                 <img
-                  src="assets/img/profile.jpg"
-                  alt="..."
-                  class="avatar-img rounded-circle"
+                      src="{{ asset('assets/img/avatar.png') }}" 
+                      alt="Avatar" 
+                      class="avatar-img rounded-circle"
+                      style="width: 40px; height: 40px;"
                 />
               </div>
               <span class="profile-username">
                 <span class="op-7">Hi,</span>
-                <span class="fw-bold">Hizrian</span>
+                <span class="fw-bold">{{ Auth::user()->name }}</span>
               </span>
             </a>
             <ul class="dropdown-menu dropdown-user animated fadeIn">
@@ -103,7 +104,7 @@
                 </li> --}}
                 <li>
                   {{-- <div class="dropdown-divider"></div> --}}
-                  <a class="dropdown-item" href="#">My Profile</a>
+                  <a class="dropdown-item" href="#">Profile</a>
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
                   <form id="logout-form" action="{{ route('logout') }}" method="POST">
