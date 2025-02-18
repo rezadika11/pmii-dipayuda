@@ -119,5 +119,43 @@
         });
     });
 </script>
+{{-- Delete pos --}}
+<script>
+    $(document).ready(function(){
+        var deletePostId = null; // Variabel untuk menyimpan ID post yang akan dihapus
+        
+        // Saat tombol hapus diklik, tampilkan modal konfirmasi
+        $(document).on('click', '.btn-delete', function(){
+            deletePostId = $(this).data('id'); // Ambil ID dari atribut data-id
+            $('#confirmModalDelete').modal('show'); // Tampilkan modal
+        });
+        
+        // Saat tombol "Hapus" pada modal diklik, kirimkan AJAX request untuk menghapus data
+        $('#btnDestroy').on('click', function(){
+            if(deletePostId) {
+                $.ajax({
+                    url: `{{ route('posts.destroy','') }}/${deletePostId}`, // Sesuaikan dengan route delete Anda
+                    type: 'DELETE',
+                    data: {
+                        _token: '{{ csrf_token() }}' // Sertakan CSRF    token
+                    },
+                    success: function(response) {
+                        // Sembunyikan modal
+                        $('#confirmModalDelete').modal('hide');
+                        // Reload DataTable tanpa mereset paging (jika menggunakan DataTables)
+                        $('#dataTables').DataTable().ajax.reload(null, false);
+                        // Tampilkan notifikasi sukses (bisa menggunakan alert atau notifikasi lainnya)
+                         toastr.success('Pos berhasil dihapus');
+                    },
+                    error: function(xhr) {
+                        $('#confirmModalDelete').modal('hide');
+                        toastr.error('Gagal menghapus post.');
+                    }
+                });
+            }
+        });
+    });
+</script>
+
 
 @endpush

@@ -9,6 +9,8 @@ use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -48,9 +50,9 @@ class PostController extends Controller
                 style="cursor:pointer;">' . $label . '</span>';
             })
             ->addColumn('aksi', function ($row) {
-                $btnEdit = '<button type="button" class="btn btn-sm btn-success btn-edit" data-id="' . $row->id . '">
-                            <i class="bi bi-pencil-square"></i> Edit
-                        </button>';
+                $btnEdit = '<a href="' . route('posts.edit', $row->id) . '" class="btn btn-sm btn-success btn-edit" data-id="' . $row->id . '">
+                        <i class="bi bi-pencil-square"></i> Edit
+                    </a>';
                 $btnDelete = '<button type="button" class="btn btn-sm btn-danger btn-delete" data-id="' . $row->id . '">
                             <i class="bi bi-trash"></i> Hapus
                         </button>';
@@ -114,7 +116,7 @@ class PostController extends Controller
                 $file = $request->file('file');
 
                 // Generate safe filename
-                $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+                $filename = time() . '.' . $file->getClientOriginalExtension();
 
                 // Store file
                 $path = $file->storeAs('uploads', $filename, 'public');
@@ -173,7 +175,7 @@ class PostController extends Controller
                 $file = $request->file('image');
 
                 // Generate safe filename
-                $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+                $filename = time() . '.' . $file->getClientOriginalExtension();
 
                 // Simpan file ke direktori 'thumbnail' pada disk 'public'
                 $path = $file->storeAs('thumbnail', $filename, 'public');
@@ -206,7 +208,143 @@ class PostController extends Controller
             return redirect()->route('posts.index');
         } catch (\Exception $e) {
             // Redirect kembali dengan input yang telah diisi dan menampilkan pesan error
+            toastr()->error('Terjadi kesalahan');
             return redirect()->back()->withInput()->with('error', $e->getMessage());
+        }
+    }
+
+    public function edit($id)
+    {
+        $post = Post::with('tags')->findOrFail($id);
+        $data['categories'] = Category::all();
+        $data['tags'] = Tag::all();
+        $data['users'] = User::all();
+        $data['post'] = $post;
+
+        return view('backend.admin.post.edit', $data);
+    }
+
+    public function update(Request $request, $id)
+    {
+        // Validasi input
+        $validated = $request->validate([
+            'title'             => 'required|max:255|unique:posts,title,' . $id,
+            'content'           => 'required',
+            'excerpt'           => 'required',
+            'meta_description'  => 'required',
+            'category'          => 'required|exists:categories,id',
+            'tag'               => 'nullable|array',
+            'tag.*'             => 'exists:tags,id',
+            'author'            => 'required',
+            'published'         => 'required|date',
+            'is_published'      => 'required|boolean',
+            'image'             => 'nullable|image|mimes:jpeg,png,jpg|max:1024',
+        ], [
+            'title.required'            => 'Judul post harus diisi.',
+            'title.unique'              => 'Judul post sudah ada.',
+            'title.max'                 => 'Judul post maksimal 255 karakter.',
+            'content.required'          => 'Isi post harus diisi.',
+            'excerpt.required'          => 'Deskripsi post harus diisi.',
+            'meta_description.required' => 'SEO Meta Deskripsi post harus diisi.',
+            'category.required'         => 'Kategori post harus dipilih.',
+            'tag.*.exists'              => 'Tag yang dipilih tidak valid.',
+            'author.required'           => 'Author post harus dipilih.',
+            'published.required'        => 'Tanggal publikasi post harus dipilih.',
+            'is_published.required'     => 'Status publikasi post harus dipilih.',
+            'image.image'               => 'File yang diunggah harus berupa gambar.',
+            'image.mimes'               => 'Format gambar yang diperbolehkan hanya png, jpg, atau jpeg.',
+            'image.max'                 => 'Ukuran gambar maksimal 1MB.',
+        ]);
+
+        try {
+            // Ambil post yang akan diperbarui
+            $post = Post::findOrFail($id);
+
+            // Proses upload gambar jika ada file baru
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+
+                // Generate safe filename
+                $filename = time() . '.' . $file->getClientOriginalExtension();
+
+                // Simpan file ke direktori 'thumbnail' pada disk 'public'
+                $path = $file->storeAs('thumbnail', $filename, 'public');
+
+                if (!$path) {
+                    throw new \Exception('Gagal menyimpan file gambar.');
+                }
+
+                // Hapus gambar lama jika ada
+                if ($post->image) {
+                    $oldImagePath = storage_path('app/public/' . $post->image);
+                    if (File::exists($oldImagePath)) {
+                        File::delete($oldImagePath);
+                    }
+                }
+
+                // Update kolom gambar
+                $post->image = $path;
+            }
+
+            // Update data post
+            $post->update([
+                'title'             => $request->title,
+                'slug'              => Str::slug($request->title),
+                'content'           => $request->content,
+                'excerpt'           => $request->excerpt,
+                'meta_description'  => $request->meta_description,
+                'category_id'       => $request->category,
+                'user_id'           => $request->author,
+                'published'         => $request->published,
+                'is_published'      => $request->is_published,
+            ]);
+
+            // Update relasi tags
+            if ($request->has('tag')) {
+                $post->tags()->sync($request->tag);
+            } else {
+                $post->tags()->sync([]); // Kosongkan relasi jika tidak ada tag
+            }
+
+            // Redirect dengan pesan sukses
+            toastr()->success('Pos berhasil diupdate');
+            return redirect()->route('posts.index');
+        } catch (\Exception $e) {
+            // Tangani error dan tampilkan pesan
+            toastr()->error('Terjadi kesalahan');
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            // Ambil post berdasarkan ID
+            $post = Post::findOrFail($id);
+
+            // Hapus file gambar jika ada
+            if ($post->image) {
+                $oldImagePath = storage_path('app/public/' . $post->image);
+                if (File::exists($oldImagePath)) {
+                    File::delete($oldImagePath);
+                }
+            }
+
+            // Lepaskan relasi tags
+            $post->tags()->detach();
+
+            // Hapus data post dari database
+            $post->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Post berhasil dihapus!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
         }
     }
 }
