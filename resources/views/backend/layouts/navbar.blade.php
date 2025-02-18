@@ -104,7 +104,7 @@
                 </li> --}}
                 <li>
                   {{-- <div class="dropdown-divider"></div> --}}
-                  <a class="dropdown-item" href="#">Profile</a>
+                  <a class="dropdown-item" href="{{ route('profil.index') }}">Profile</a>
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
                   <form id="logout-form" action="{{ route('logout') }}" method="POST">

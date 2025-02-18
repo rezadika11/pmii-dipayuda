@@ -38,6 +38,15 @@ class TagController extends Controller
         return view('backend.admin.tag.index');
     }
 
+    public function search(Request $request)
+    {
+        $query = $request->input('q');
+        $tags = Tag::where('name', 'LIKE', "%$query%")->get();
+
+        return response()->json($tags);
+    }
+
+
     public function store(Request $request)
     {
         $validatedData = $request->validate([

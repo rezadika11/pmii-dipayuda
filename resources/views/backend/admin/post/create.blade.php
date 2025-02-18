@@ -95,7 +95,7 @@
                                 <label for="tag">Tag <span class="text-danger">*</span></label>
                                 <select class="form-select select2-multiple @error('tag')
                                     is-invalid
-                                @enderror" name="tag[]" id="tag" placeholder="Pilih Tag" multiple="multiple">
+                                @enderror" name="tag[]" id="tags" placeholder="Pilih Tag" multiple="multiple">
                                     @foreach ($tags as $item)
                                         <option value="{{ $item->id }}">{{ $item->name }}</option>
                                     @endforeach
@@ -117,7 +117,7 @@
                                         <option value="{{ $item->id }}" {{ auth()->user()->id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                     @endforeach
                                 </select>
-                               @error('author')
+                               @error('content')
                                     <div class="invalid-feedback">
                                             {{ $message }}
                                     </div>
@@ -175,10 +175,10 @@
             theme: 'bootstrap-5'
         } );
 
-         $('.select2-multiple').select2( {
-            theme: 'bootstrap-5',
-            placeholder: "Pilih Tag"
-        } );
+        //  $('.select2-multiple').select2( {
+        //     theme: 'bootstrap-5',
+        //     placeholder: "Pilih Tag"
+        // } );
 
 
         $('#gambar').on('change', function(){
@@ -276,5 +276,74 @@
             });
         }
     });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#tags').select2({
+                placeholder: ' Pilih atau tambah tag...',
+                theme: 'bootstrap-5',
+                tags: true, // Memungkinkan pengguna menambahkan tag baru
+                ajax: {
+                    url: '{{ route("tags.search") }}', // Endpoint untuk mencari tags
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            q: params.term, // Query pencarian
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data.map(function (item) {
+                                return { id: item.id, text: item.name };
+                            }),
+                        };
+                    },
+                    cache: true,
+                },
+                createTag: function (params) {
+                    // Fungsi untuk membuat tag baru
+                    return {
+                        id: params.term, // ID sementara
+                        text: params.term, // Nama tag
+                        newTag: true, // Penanda bahwa ini adalah tag baru
+                    };
+                },
+                templateResult: function (data) {
+                    // Menampilkan hasil pencarian
+                    if (data.newTag) {
+                        return $('<span style="color: blue;">Tambahkan: "' + data.text + '"</span>');
+                    }
+                    return data.text;
+                },
+            });
+
+            // Event ketika pengguna memilih opsi dari Select2
+            $('#tags').on('select2:select', function (e) {
+                let selectedData = e.params.data;
+
+                // Jika tag adalah tag baru (newTag), simpan langsung ke database
+                if (selectedData.newTag) {
+                    $.ajax({
+                        url: '{{ route("tags.store") }}',
+                        method: 'POST',
+                        data: { name: selectedData.text },
+                        headers: {
+                            'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                        },
+                        success: function (response) {
+                            // console.log('Tag baru disimpan:', response);
+
+                            // Update ID tag baru di Select2
+                            selectedData.id = response.id; // Gunakan ID dari server
+                            $('#tags').trigger('change'); // Refresh Select2
+                        },
+                        error: function (error) {
+                            console.error('Gagal menyimpan tag:', error);
+                        },
+                    });
+                }
+            });
+        });
     </script>
 @endpush
