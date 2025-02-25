@@ -3,7 +3,7 @@
 @push('css')
     <link rel="stylesheet" href="{{ asset('assets/css/select2/select2.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/select2/select2-bootstrap-5-theme.min.css') }}" />
-     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('assets/css/summernote/summernote.min.css') }}">
 @endpush
 @section('content')
 <div class="container">
@@ -24,7 +24,7 @@
                                 <label for="title">Judul <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('title')
                                     is-invalid
-                                @enderror" id="title" name="title" autofocus>
+                                @enderror" id="title" name="title" value="{{ old('title') }}" autofocus>
                                   @error('title')
                                     <div class="invalid-feedback">
                                             {{ $message }}
@@ -36,7 +36,7 @@
                                 <label for="summernote">Isi <span class="text-danger">*</span></label>
                                 <textarea id="summernote" name="content" class="form-control @error('content')
                                     is-invalid
-                                @enderror"></textarea>
+                                @enderror">{{ old('content') }}</textarea>
                                 @error('content')
                                     <div class="invalid-feedback">
                                             {{ $message }}
@@ -48,7 +48,7 @@
                                 <label for="excerpt">Deskripsi <span class="text-danger">*</span></label>
                                 <textarea name="excerpt" class="form-control @error('excerpt')
                                     is-invalid
-                                @enderror" id="excerpt" cols="4" rows="4"></textarea>
+                                @enderror" id="excerpt" cols="4" rows="4">{{ old('excerpt') }}</textarea>
                                  @error('excerpt')
                                     <div class="invalid-feedback">
                                             {{ $message }}
@@ -60,7 +60,7 @@
                                 <label for="meta_description">SEO Meta Deskripsi <span class="text-danger">*</span></label>
                                 <textarea name="meta_description" class="form-control @error('meta_description')
                                     is-invalid
-                                @enderror" id="meta_description" cols="4" rows="4"></textarea>
+                                @enderror" id="meta_description" cols="4" rows="4">{{ old('meta_description') }}</textarea>
                                   @error('meta_description')
                                     <div class="invalid-feedback">
                                             {{ $message }}
@@ -81,7 +81,9 @@
                                 @enderror">
                                     <option value="" selected disabled>Pilih Kategori</option>
                                     @foreach ($categories as $item)
-                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                        <option value="{{ $item->id }}" {{ old('category') == $item->id ? 'selected' : '' }}>
+                                            {{ $item->name }}
+                                        </option>
                                     @endforeach
                                 </select>
                                 @error('category')
@@ -168,7 +170,7 @@
 @endsection
 @push('js')
     <script src="{{ asset('assets/js/plugin/select2/select2.full.min.js') }}"></script>
-     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+    <script src="{{ asset('assets/js/plugin/summernote/summernote.min.js') }}"></script>
 
     <script>
         $('.select2').select2( {
@@ -319,31 +321,31 @@
             });
 
             // Event ketika pengguna memilih opsi dari Select2
-            $('#tags').on('select2:select', function (e) {
-                let selectedData = e.params.data;
+            // $('#tags').on('select2:select', function (e) {
+            //     let selectedData = e.params.data;
 
-                // Jika tag adalah tag baru (newTag), simpan langsung ke database
-                if (selectedData.newTag) {
-                    $.ajax({
-                        url: '{{ route("tags.store") }}',
-                        method: 'POST',
-                        data: { name: selectedData.text },
-                        headers: {
-                            'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                        },
-                        success: function (response) {
-                            // console.log('Tag baru disimpan:', response);
+            //     // Jika tag adalah tag baru (newTag), simpan langsung ke database
+            //     if (selectedData.newTag) {
+            //         $.ajax({
+            //             url: '{{ route("tags.store") }}',
+            //             method: 'POST',
+            //             data: { name: selectedData.text },
+            //             headers: {
+            //                 'X-CSRF-TOKEN': "{{ csrf_token() }}",
+            //             },
+            //             success: function (response) {
+            //                 // console.log('Tag baru disimpan:', response);
 
-                            // Update ID tag baru di Select2
-                            selectedData.id = response.id; // Gunakan ID dari server
-                            $('#tags').trigger('change'); // Refresh Select2
-                        },
-                        error: function (error) {
-                            console.error('Gagal menyimpan tag:', error);
-                        },
-                    });
-                }
-            });
+            //                 // Update ID tag baru di Select2
+            //                 selectedData.id = response.id; // Gunakan ID dari server
+            //                 $('#tags').trigger('change'); // Refresh Select2
+            //             },
+            //             error: function (error) {
+            //                 console.error('Gagal menyimpan tag:', error);
+            //             },
+            //         });
+            //     }
+            // });
         });
     </script>
 @endpush

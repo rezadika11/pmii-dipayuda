@@ -7,11 +7,9 @@ use App\Http\Controllers\Backend\Admin\TagController;
 use App\Http\Controllers\Backend\Admin\UserController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\ProfilController;
+use App\Http\Controllers\Frontend\HomeController;
+use App\Http\Controllers\Frontend\PostController as FrontendPostController;
 use Illuminate\Support\Facades\Route;
-
-Route::get('/', function () {
-    return view('welcome');
-});
 
 Route::middleware('guest')->group(function () {
     Route::get('/auth/login', [AuthController::class, 'login'])->name('login');
@@ -71,3 +69,9 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         Route::post('/update/{id}', 'update')->name('update');
     });
 });
+
+//Frontend controller
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/{slug}', [FrontendPostController::class, 'index'])->name('detailPost');
+Route::get('/category/{slug}', [FrontendPostController::class, 'postCategory'])->name('postCategory');

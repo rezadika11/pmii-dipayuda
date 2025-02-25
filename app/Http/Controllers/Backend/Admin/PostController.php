@@ -20,7 +20,7 @@ class PostController extends Controller
     public function datatable()
     {
         // Pastikan untuk eager load relasi agar tidak terjadi N+1 problem
-        $query = Post::with(['users', 'category']);
+        $query = Post::with(['users', 'category'])->latest();
 
         return DataTables::of($query)
             ->addIndexColumn() // Kolom No
@@ -201,9 +201,23 @@ class PostController extends Controller
                 'image'             => $path,
             ]);
 
+            $inputTags = $request->tag;
+            $tagIds = [];
+
+            foreach ($inputTags as $tag) {
+                // Jika $tag bukan angka, anggap sebagai tag baru
+                if (!is_numeric($tag)) {
+                    // Buat tag baru dan ambil ID-nya
+                    $newTag = Tag::create(['name' => $tag, 'slug' => Str::slug($tag)]);
+                    $tagIds[] = $newTag->id;
+                } else {
+                    $tagIds[] = $tag;
+                }
+            }
+
             // Menggunakan attach untuk menambahkan relasi ke tag
             // Asumsi: $request->tag adalah array berisi ID tag, misalnya [1, 2, 3]
-            $post->tags()->sync($request->tag);
+            $post->tags()->sync($tagIds);
             toastr()->success('Pos berhasil disimpan');
             return redirect()->route('posts.index');
         } catch (\Exception $e) {

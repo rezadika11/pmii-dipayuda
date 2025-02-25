@@ -3,7 +3,7 @@
 @push('css')
     <link rel="stylesheet" href="{{ asset('assets/css/select2/select2.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/select2/select2-bootstrap-5-theme.min.css') }}" />
-     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('assets/css/summernote/summernote.min.css') }}">
 @endpush
 @section('content')
 <div class="container">
@@ -174,7 +174,7 @@
 @endsection
 @push('js')
     <script src="{{ asset('assets/js/plugin/select2/select2.full.min.js') }}"></script>
-     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+    <script src="{{ asset('assets/js/plugin/summernote/summernote.min.js') }}"></script>
 
     <script>
         $('.select2').select2( {

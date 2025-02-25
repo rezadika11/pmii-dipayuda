@@ -20,7 +20,7 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Judul</th>
+                                    <th width="30%">Judul</th>
                                     <th>Penulis</th>
                                     <th>Kategori</th>
                                     <th>Tanggal</th>
