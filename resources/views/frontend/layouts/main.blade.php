@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@yield('title') - PMII Dipayuda Banjarnegara</title>
@@ -8,37 +9,43 @@
     <link rel="icon" href="{{ asset('assets/img/logo.png') }}">
     <link rel="stylesheet" href="{{ asset('assets/font/bootstrap-icons.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    {{--
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}"> --}}
+    @vite('resources/css/app.css')
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/aos/aos.css') }}">
-  </head>
-  <body class="bg-gray-100 flex flex-col min-h-screen">
+</head>
+
+<body class="bg-gray-100 flex flex-col min-h-screen">
     <header>
-      <!-- Top Bar -->
-     @include('frontend.layouts.top-header')
+        <!-- Top Bar -->
+        @include('frontend.layouts.top-header')
 
-      <!-- Main Header -->
-     @include('frontend.layouts.main-header')
+        <!-- Main Header -->
+        @include('frontend.layouts.main-header')
 
-      <!-- Navigation -->
-    @include('frontend.layouts.navbar')
+        <!-- Navigation -->
+        @include('frontend.layouts.navbar')
     </header>
 
     @yield('content')
 
-   @include('frontend.layouts.footer')
+    @include('frontend.layouts.footer')
 
     <!-- Tambahan untuk responsivitas dan aksesibilitas -->
     <div id="mobile-menu-overlay" class="fixed inset-0 bg-black opacity-50 z-40 hidden"></div>
 
     <!-- Tombol scroll to top -->
-    <button id="scrollToTop" class="fixed bottom-6 right-6 bg-blue-600 text-white w-12 h-12 rounded-full shadow-lg hover:bg-blue-700 transition duration-300 hidden">
+    <button id="scrollToTop"
+        class="fixed bottom-6 right-6 bg-blue-600 text-white w-12 h-12 rounded-full shadow-lg hover:bg-blue-700 transition duration-300 hidden">
         <i class="bi bi-arrow-up text-xl"></i>
     </button>
     <script src="{{ asset('js/script.js') }}"></script>
-   <script src="{{ asset('assets/js/plugin/aos/aos.js') }}"></script>
+    <script src="{{ asset('assets/js/plugin/aos/aos.js') }}"></script>
     <script>
-      AOS.init({
+        AOS.init({
           once: true,
       });
     </script>
@@ -108,5 +115,6 @@
             });
         });
     </script>
-  </body>
+</body>
+
 </html>
